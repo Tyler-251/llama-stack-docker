@@ -33,13 +33,12 @@ async def agent_example():
     session_id = agent.create_session("test-session")
     print(f"Created session_id={session_id} for Agent({agent.agent_id})")
 
-    user_prompts = [
-        "Who is the most played character in marvel rivals?",
-        "thanks",
-    ]
-
     loop = asyncio.get_running_loop()
-    for prompt in user_prompts:
+    while True:
+        prompt = await loop.run_in_executor(None, input, "Enter your prompt (or 'exit' to quit): ")
+        if prompt.lower() == 'exit':
+            break
+
         response = agent.create_turn(
             messages=[
                 {
