@@ -1,8 +1,8 @@
 #!/bin/bash
 
-export INFERENCE_MODEL="meta-llama/Llama-3.2-3B-Instruct"
+export INFERENCE_MODEL="meta-llama/Llama-3.2-1B-Instruct"
 # ollama names this model differently, and we must use the ollama name when loading the model
-export OLLAMA_INFERENCE_MODEL="llama3.2:3b-instruct-fp16"
+export OLLAMA_INFERENCE_MODEL="llama3.2:1b-instruct-fp16"
 export LLAMA_STACK_PORT=5001
 
 # Find IP Address
@@ -48,9 +48,9 @@ OLLAMA_HOST=$IP_ADDRESS ollama run $OLLAMA_INFERENCE_MODEL --keepalive 60m &
 
 
 sudo docker run -it \
-  -p 5001:5001 \
+  -p $LLAMA_STACK_PORT:$LLAMA_STACK_PORT \
   -v ~/.llama:/root/.llama \
   llamastack/distribution-ollama \
-  --port 5001 \
-  --env INFERENCE_MODEL=meta-llama/Llama-3.2-3B-Instruct \
+  --port $LLAMA_STACK_PORT \
+  --env INFERENCE_MODEL=$INFERENCE_MODEL \
   --env OLLAMA_URL=http://$IP_ADDRESS:11434/

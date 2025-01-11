@@ -1,7 +1,7 @@
 import os
 from llama_stack_client import LlamaStackClient
 
-client = LlamaStackClient(base_url="http://172.29.87.129:5001")
+client = LlamaStackClient(base_url="http://192.168.1.98:5001")
 
 # List available models
 # models = client.models.list()
