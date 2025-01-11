@@ -1,7 +1,7 @@
 import llama_stack_client
 import csv
 
-client = llama_stack_client.LlamaStackClient(base_url="http://172.29.87.129:5001")
+client = llama_stack_client.LlamaStackClient(base_url="http://192.168.1.98:5001")
 
 pairs = []
 
