@@ -1,0 +1,2 @@
+Credits to:
+https://github.com/jageenshukla/ollama-stack-examples/blob/main/story_teller.py

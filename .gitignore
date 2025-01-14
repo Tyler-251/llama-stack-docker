@@ -1,4 +1,5 @@
 /ollama/*
+/data/*
 *.csv
-/env/*
+/env*/*
 token.txt
