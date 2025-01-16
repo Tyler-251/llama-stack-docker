@@ -35,15 +35,17 @@ then
     echo "ollama is already running with PID $ollama_pid, launching model"
 else
     echo "Starting ollama..."
-    OLLAMA_HOST=$IP_ADDRESS:11434 ollama serve &
+    OLLAMA_HOST=$IP_ADDRESS ollama serve &
 fi
 
 echo "Running model $INFERENCE_MODEL..."
 echo "Ollama model name: $OLLAMA_INFERENCE_MODEL"
 echo "Ollama stack port: $LLAMA_STACK_PORT"
 
-OLLAMA_HOST=$IP_ADDRESS ollama run $OLLAMA_INFERENCE_MODEL --keepalive 60m &
 OLLAMA_HOST=$IP_ADDRESS ollama ps
+# OLLAMA_HOST=$IP_ADDRESS ollama run $OLLAMA_INFERENCE_MODEL --keepalive 60m &
+OLLAMA_HOST=$IP_ADDRESS ollama run $OLLAMA_INFERENCE_MODEL --keepalive 60m &
+
 
 sudo docker run -it \
   -p $LLAMA_STACK_PORT:$LLAMA_STACK_PORT \
@@ -51,5 +53,4 @@ sudo docker run -it \
   llamastack/distribution-ollama \
   --port $LLAMA_STACK_PORT \
   --env INFERENCE_MODEL=$INFERENCE_MODEL \
-  --env OLLAMA_URL=http://$IP_ADDRESS:11434/ 
-
+  --env OLLAMA_URL=http://$IP_ADDRESS:11434/
