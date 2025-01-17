@@ -49,12 +49,12 @@ class VisualTool(CustomTool):
     def get_params_definition(self) -> dict[str, ToolParamDefinitionParam]:
         """Returns the parameters definition for the tool."""
         return {
-            # "command": ToolParamDefinitionParam(
-            #     param_type="str",
-            #     default="echo 'Hello, World!'",
-            #     description="The command to run in the terminal.",
-            #     required=False
-            # )
+            "objective": ToolParamDefinitionParam(
+                param_type="str",
+                default="give a brief description of the environment",
+                description="The objective of the vision model",
+                required=False
+            )
         }
 
     def run(self, messages: list[UserMessage]) -> list[ToolResponseMessage]:
@@ -68,11 +68,14 @@ class VisualTool(CustomTool):
         with open("./temp/screenshots/screenshot.png", "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read())
 
+        objective = "give a brief description of the environment"
+        objective = tool_call.arguments.get("objective", objective)
+        
         response = requests.post(
             "http://192.168.1.98:11434/api/generate",
             json={
                 "model": "llava:latest", 
-                "prompt": "Whats going on in this environment? Be brief and use a list.", 
+                "prompt": "Whats going on in this environment? Be brief and use a list. Visual objective: " + objective, 
                 "stream": False, 
                 "images": [encoded_string.decode("utf-8")]
             }

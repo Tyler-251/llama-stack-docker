@@ -1,6 +1,6 @@
 import asyncio
 import os
-
+import json
 
 from llama_stack_client.lib.agents.event_logger import EventLogger
 
@@ -20,6 +20,16 @@ story_teller = StoryTeller()
 terminal_tool = TerminalTool()
 visual_tool = VisualTool()
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 def create_agent(client: LlamaStackClient, model: str) -> Agent:
     """Creates and returns an agent with the given client and model."""
@@ -64,8 +74,8 @@ async def handle_responses(agent: Agent, session_id: str) -> None:
         for res in response:
             tool_response = None
             if isinstance(res, ToolResponseMessage): 
-                print("Tool recieved...")
-                print(res)
+                print(f"{bcolors.HEADER}Tool Response:{bcolors.ENDC}")
+                print(f"{bcolors.OKGREEN}{json.loads(res.content.text)['response']}{bcolors.ENDC}")
                 tool_response = agent.create_turn( #reroute input to model
                     messages=[{
                         "role": "user",
@@ -75,7 +85,7 @@ async def handle_responses(agent: Agent, session_id: str) -> None:
                 )
             else: # if regular message
                 if hasattr(res.event.payload, "text_delta"):
-                    print("" + res.event.payload.text_delta, end="", flush=True)
+                    print(f"{bcolors.OKCYAN}{res.event.payload.text_delta}{bcolors.ENDC}", end="", flush=True)
                 elif hasattr(res.event.payload, "event_type"):
                     if res.event.payload.event_type == "step_complete":
                         print()
@@ -84,7 +94,7 @@ async def handle_responses(agent: Agent, session_id: str) -> None:
             if tool_response:
                 for res in tool_response:
                     if hasattr(res.event.payload, "text_delta"):
-                        print("" + res.event.payload.text_delta, end="", flush=True)
+                        print(f"{bcolors.OKCYAN}{res.event.payload.text_delta}{bcolors.ENDC}", end="", flush=True)
                     elif hasattr(res.event.payload, "event_type"):
                         if res.event.payload.event_type == "step_complete":
                             print()
