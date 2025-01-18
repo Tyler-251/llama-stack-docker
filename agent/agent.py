@@ -30,6 +30,13 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    
+messages = [
+    {
+        "role": "user",
+        "content": "Hello, who are you?",
+    }
+]
 
 def create_agent(client: LlamaStackClient, model: str) -> Agent:
     """Creates and returns an agent with the given client and model."""
@@ -75,29 +82,31 @@ async def handle_responses(agent: Agent, session_id: str) -> None:
             tool_response = None
             if isinstance(res, ToolResponseMessage): 
                 print(f"{bcolors.HEADER}Tool Response:{bcolors.ENDC}")
-                print(f"{bcolors.OKGREEN}{json.loads(res.content.text)['response']}{bcolors.ENDC}")
+                print(f"{bcolors.OKGREEN}{res.content.text}{bcolors.ENDC}")
                 tool_response = agent.create_turn( #reroute input to model
                     messages=[{
                         "role": "user",
-                        "content": "Tool response: " + res.content.__str__(),    
+                        "content": res.content.__str__(),    
                     }],
                     session_id=session_id,
                 )
             else: # if regular message
-                if hasattr(res.event.payload, "text_delta"):
-                    print(f"{bcolors.OKCYAN}{res.event.payload.text_delta}{bcolors.ENDC}", end="", flush=True)
-                elif hasattr(res.event.payload, "event_type"):
-                    if res.event.payload.event_type == "step_complete":
-                        print()
-                    
-                
-            if tool_response:
-                for res in tool_response:
+                if hasattr(res, "event"):
                     if hasattr(res.event.payload, "text_delta"):
                         print(f"{bcolors.OKCYAN}{res.event.payload.text_delta}{bcolors.ENDC}", end="", flush=True)
                     elif hasattr(res.event.payload, "event_type"):
                         if res.event.payload.event_type == "step_complete":
                             print()
+                    
+                
+            if tool_response:
+                for res in tool_response:
+                    if hasattr(res, "event"):
+                        if hasattr(res.event.payload, "text_delta"):
+                            print(f"{bcolors.OKCYAN}{res.event.payload.text_delta}{bcolors.ENDC}", end="", flush=True)
+                        elif hasattr(res.event.payload, "event_type"):
+                            if res.event.payload.event_type == "step_complete":
+                                print()
             
 
         # tool_response = None

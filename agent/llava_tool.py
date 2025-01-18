@@ -8,6 +8,7 @@ from llama_stack_client.types import FunctionCallToolDefinition
 import requests
 import base64
 import pyautogui
+import pytesseract
 
 
 class VisualTool(CustomTool):
@@ -60,6 +61,8 @@ class VisualTool(CustomTool):
     def run(self, messages: list[UserMessage]) -> list[ToolResponseMessage]:
         """Runs the tool with the given messages."""
         os.environ["PYAUTOGUI_OS"] = "windows"
+        pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
+        
         tool_call = self._find_tool_call(messages)
         
         screenshot = pyautogui.screenshot()
@@ -81,6 +84,7 @@ class VisualTool(CustomTool):
             }
         )
 
+        word_data = pytesseract.image_to_string('./temp/screenshots/screenshot.png')
     
         if tool_call:
             response = ToolResponseMessage(
@@ -88,7 +92,7 @@ class VisualTool(CustomTool):
                 tool_name=self.get_name(),
                 content={
                     "type": "text",
-                    "text": response.text,
+                    "text": f"Model Digest:\n{response.text}\nTesseract Word Detection:\n{word_data}",
                 },
                 call_id=tool_call.call_id,
             )
