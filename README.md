@@ -10,6 +10,7 @@
 - WSL specific
     - python installed on windows for custom tool runtimes
     - pyautogui (windows pip)
+- Install Tesseract on your local machine
 
 ## Server Dependencies
 - Ollama 
