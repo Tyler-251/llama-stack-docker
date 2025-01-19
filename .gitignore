@@ -1,7 +1,0 @@
-*
-!/agent/
-!/agent/** 
-!/server/
-!/server/**
-!*.md
-!reqs.txt
