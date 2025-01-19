@@ -4,9 +4,7 @@
 
 ## Python Dependencies
 - python 3.13
-- libs
-    - llama-stack
-    - llama-stack-client
+- libs via reqs.txt
 - WSL specific
     - python installed on windows for custom tool runtimes
     - pyautogui (windows pip)
