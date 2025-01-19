@@ -1,12 +1,7 @@
 *
-!/agent/*
-!/server/*
+!/agent/
+!/agent/** 
+!/server/
+!/server/**
 !*.md
 !reqs.txt
-
-# /ollama/*
-# /data/*
-# *.csv
-# /env*/*
-# token.txt
-# /temp/**
