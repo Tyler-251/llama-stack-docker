@@ -14,7 +14,7 @@ from llava_tool import VisualTool
 
 LLAMA_STACK_HOST = "192.168.1.98"
 LLAMA_STACK_PORT = 5001
-INFERENCE_MODEL = os.getenv("INFERENCE_MODEL", "meta-llama/Llama-3.2-3B-Instruct")
+INFERENCE_MODEL = os.getenv("INFERENCE_MODEL", "meta-llama/Llama-3.2-1B-Instruct")
 
 story_teller = StoryTeller()
 terminal_tool = TerminalTool()
@@ -49,7 +49,7 @@ def create_agent(client: LlamaStackClient, model: str) -> Agent:
         instructions=system_instructions,
         enable_session_persistence=False,
         streaming=False,
-        tool_choice="required",
+        tool_choice="auto",
         tools=[
             visual_tool.get_tool_definition(),
             {
@@ -68,6 +68,9 @@ async def handle_responses(agent: Agent, session_id: str) -> None:
         prompt = input("Enter your prompt (or 'exit' to quit): ")
         if prompt.lower() == 'exit':
             break 
+        if prompt.lower() == 'reset':
+            agent.create_session(session_id + "append")
+            
         
         response = agent.create_turn(
             messages=[
@@ -82,7 +85,7 @@ async def handle_responses(agent: Agent, session_id: str) -> None:
             tool_response = None
             if isinstance(res, ToolResponseMessage): 
                 print(f"{bcolors.HEADER}Tool Response:{bcolors.ENDC}")
-                print(f"{bcolors.OKGREEN}{res.content.text}{bcolors.ENDC}")
+                print(f"{bcolors.OKGREEN}{res}{bcolors.ENDC}")
                 tool_response = agent.create_turn( #reroute input to model
                     messages=[{
                         "role": "user",
